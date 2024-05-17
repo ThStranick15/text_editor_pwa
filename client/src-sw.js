@@ -1,4 +1,4 @@
-const { offlineFallback, warmStrategyCache } = require('workbox-recipes');
+const { warmStrategyCache } = require('workbox-recipes');
 const { CacheFirst } = require('workbox-strategies');
 const { registerRoute } = require('workbox-routing');
 const { CacheableResponsePlugin } = require('workbox-cacheable-response');
@@ -27,8 +27,5 @@ warmStrategyCache({
 registerRoute(({ request }) => request.mode === 'navigate', pageCache);
 
 // TODO: Implement asset caching
-registerRoute(/\.js$/, pageCache);
-registerRoute(/\.css$/, pageCache);
-registerRoute(/\.html$/, pageCache);
+registerRoute(/.(?:html|js|css|png|jpg|jpeg|svg|gif)$/, pageCache);
 
-offlineFallback(); // automatically handles regstration of Nav Route with offlinefallbackplugin, nav requests served when offline

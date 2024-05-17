@@ -22,9 +22,10 @@ const editor = new Editor();
 if (typeof editor === 'undefined') {
   loadSpinner();
 }
-
+  console.log('again')
 // Check if service workers are supported
-if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
+console.log(location.hostname)
+if ('serviceWorker' in navigator && location.hostname !== '127.0.0.1') {
   // register workbox service worker
   const workboxSW = new Workbox('/src-sw.js');
   workboxSW.register();

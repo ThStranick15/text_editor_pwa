@@ -1,55 +1,52 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WebpackPwaManifest = require('webpack-pwa-manifest');
 const path = require('path');
-const { InjectManifest, GenerateSW } = require('workbox-webpack-plugin');
-const is_prod = process.env.NODE_ENV === 'production'
-
+const { InjectManifest } = require('workbox-webpack-plugin');
 // TODO: Add and configure workbox plugins for a service worker and manifest file.
 // TODO: Add CSS loaders and babel to webpack.
-const plugins = [
-  new HtmlWebpackPlugin({
-  template: './index.html' //uses index.html as template for output file
-})
-]
 
-const prodPlugins = [
-  new GenerateSW({
-    clientsClaim: true,
-    skipWaiting: true,
-  }),
-  new InjectManifest({
-    swSrc: './src-sw.js', // Path to your service worker source file
-    swDest: 'sw.js', // Output path for the generated service worker file
-    include: [/\.html$/, /\.js$/, /\.css$/], // Files to precache
-  }),
-  new WebpackPwaManifest({
-    name: 'Text Editor',
-    short_name: 'TE',
-    description: 'Text Editor PWA',
-    background_color: '#555',
-    publicPath: '/',
-    theme_color: '#fff',
-    ios: true,
-    crossorigin: 'use-credentials', //can be null, use-credentials or anonymous
-    icons: [
-      {
-        src: path.resolve('src/images/logo.png'),
-        sizes: [96, 128, 192, 256, 384, 512] // multiple sizes
-      },
-      {
-        src: path.resolve('src/images/logo.png'),
-        size: '1024x1024',
-        purpose: 'maskable'
-      }
-    ]
+module.exports = (env,argv) => {
+  const isProd = argv.mode === 'production'
+  const plugins = [
+    new HtmlWebpackPlugin({
+    template: './index.html' //uses index.html as template for output file
   })
-]
-
-if(is_prod){
-  plugins.push(...prodPlugins)
-}
-
-module.exports = () => {
+  ]
+  
+  const prodPlugins = [
+    new InjectManifest({
+      swSrc: './src-sw.js', // Path to your service worker source file
+      include: [/\.html$/, /\.js$/, /\.css$/], // Files to precache
+    }),
+    new WebpackPwaManifest({
+      name: 'Text Editor',
+      short_name: 'TE',
+      description: 'Text Editor PWA',
+      background_color: '#555',
+      publicPath: '/',
+      theme_color: '#fff',
+      ios: true,
+      crossorigin: 'use-credentials', //can be null, use-credentials or anonymous
+      fingerprints: false,
+      icons: [
+        {
+          src: path.resolve('src/images/logo.png'),
+          destination: 'assets/icons',
+          sizes: [96, 128, 192, 256, 384, 512] // multiple sizes
+        },
+        {
+          src: path.resolve('src/images/logo.png'),
+          destination: 'assets/icons',
+          size: '1024x1024',
+          purpose: 'maskable'
+        }
+      ]
+    })
+  ]
+  
+  if(isProd){
+    plugins.push(...prodPlugins)
+  }
   return {
     mode: 'development',
     entry: {
@@ -59,8 +56,9 @@ module.exports = () => {
     output: {
       filename: '[name].bundle.js',
       path: path.resolve(__dirname, 'dist'),
+      clean: true
     },
-    plugins,
+    plugins: plugins,
     module: {
       rules: [
         {
@@ -99,13 +97,6 @@ module.exports = () => {
       compress: true,
       hot: true,
       port: 8080,
-      proxy: [
-        {
-          context: ['/'],
-          target: 'http://localhost:3000',
-          secure: false
-        }
-      ],
       watchFiles:{
         paths:['./index.html']
       }

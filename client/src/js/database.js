@@ -22,7 +22,6 @@ export const putDb = async (content) => {
 
   return content
 }
-  //console.error('putDb not implemented');
 
 // TODO: Add logic for a method that gets all the content from the database
 export const getDb = async () => {
@@ -32,8 +31,7 @@ export const getDb = async () => {
 
   const data = await store.get(1)
 
-  return data.content
+  return data ? data.content : 0
 }
-  //console.error('getDb not implemented');
 
 initdb();
