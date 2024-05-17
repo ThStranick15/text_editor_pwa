@@ -5,9 +5,9 @@ const { CacheableResponsePlugin } = require('workbox-cacheable-response');
 const { ExpirationPlugin } = require('workbox-expiration');
 const { precacheAndRoute } = require('workbox-precaching/precacheAndRoute');
 
-precacheAndRoute(self.__WB_MANIFEST);
+precacheAndRoute(self.__WB_MANIFEST); //precache static assets
 
-const pageCache = new CacheFirst({
+const pageCache = new CacheFirst({ //implement cache first
   cacheName: 'page-cache',
   plugins: [
     new CacheableResponsePlugin({
@@ -27,4 +27,8 @@ warmStrategyCache({
 registerRoute(({ request }) => request.mode === 'navigate', pageCache);
 
 // TODO: Implement asset caching
-registerRoute();
+registerRoute(/\.js$/, pageCache);
+registerRoute(/\.css$/, pageCache);
+registerRoute(/\.html$/, pageCache);
+
+offlineFallback(); // automatically handles regstration of Nav Route with offlinefallbackplugin, nav requests served when offline

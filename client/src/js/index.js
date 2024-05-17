@@ -24,7 +24,7 @@ if (typeof editor === 'undefined') {
 }
 
 // Check if service workers are supported
-if ('serviceWorker' in navigator) {
+if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
   // register workbox service worker
   const workboxSW = new Workbox('/src-sw.js');
   workboxSW.register();
