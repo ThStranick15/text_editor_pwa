@@ -1,0 +1,1 @@
+(()=>{const t=document.getElementById("buttonInstall");let e;window.addEventListener("beforeinstallprompt",(t=>{t.preventDefault(),e=t,console.log("beforeinstallprompt fired")})),t.addEventListener("click",(async()=>{e.prompt();const{output:t}=await e.prompt();console.log(`${t}`),e=null})),window.addEventListener("appinstalled",(t=>{e=null,console.log("PWA installed")}))})();
